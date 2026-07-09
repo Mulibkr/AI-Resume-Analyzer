@@ -1,0 +1,33 @@
+John Doe
+Full Stack Software Developer
+Email: john.doe@example.com | Phone: +1-555-0199 | Location: San Francisco, CA
+GitHub: https://github.com/johndoe | LinkedIn: linkedin.com/in/johndoe
+
+SUMMARY
+Detail-oriented and passionate Full Stack Developer with over 4 years of professional experience building scalable web applications. Expert in Python backend development with Django/Flask and frontend integrations using React.
+
+SKILLS
+- Languages: Python, JavaScript, TypeScript, HTML, CSS, SQL, Bash
+- Frameworks & Libraries: Django, Flask, React, Next.js, Bootstrap
+- Databases: PostgreSQL, SQLite, MySQL, Redis
+- Tools & Cloud: Git, Docker, AWS, GitHub Actions, Agile, Scrum
+
+EXPERIENCE
+Full Stack Developer | TechSolutions Corp (2024 - Present)
+- Engineered backend APIs using Python, Django, and PostgreSQL, increasing application response time by 25%.
+- Built dynamic frontend pages with React and Next.js, enhancing user engagement and accessibility compliance.
+- Streamlined deployment pipelines by implementing Docker containers and GitHub Actions for continuous integration.
+- Collaborated in a 6-person Agile Scrum team to release monthly application features.
+
+Software Engineer | WebCraft Agency (2022 - 2024)
+- Designed and maintained custom SQL databases using SQLite and MySQL for various local business web platforms.
+- Developed clean HTML/CSS/Bootstrap responsive landing pages for mobile and desktop screens.
+- Utilized Git for version control and actively participated in peer code reviews.
+
+EDUCATION
+B.S. in Computer Science
+State University, 2022
+
+CERTIFICATIONS
+- AWS Certified Developer - Associate (2025)
+- Certified ScrumMaster (CSM) (2024)

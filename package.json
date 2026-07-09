@@ -1,0 +1,10 @@
+{
+  "name": "ai-resume-analyzer",
+  "version": "1.0.0",
+  "description": "AI Resume Analyzer project using Python Django backend and HTML/CSS frontend.",
+  "scripts": {
+    "dev": ".venv\\Scripts\\python manage.py runserver"
+  },
+  "author": "AURA",
+  "license": "ISC"
+}

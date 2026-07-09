@@ -1,0 +1,32 @@
+Sarah Jenkins
+Data Scientist / ML Engineer
+Email: sarah.j@example.com | Phone: +1-555-0188
+GitHub: github.com/sarahj | Portfolio: sarahj.dev
+
+SUMMARY
+A data enthusiast and machine learning engineer with a solid background in statistical analysis, predictive modeling, and data pipelines. Over 3 years of experience applying NLP and Deep Learning techniques using Python to solve complex business problems.
+
+SKILLS
+- Core Tech: Python, R, SQL, Scala
+- ML & DS Libraries: Pandas, NumPy, Scikit-learn, TensorFlow, PyTorch, Keras, NLTK, SpaCy
+- Visualization: Matplotlib, Seaborn, Tableau, Power BI
+- Databases & Cloud: PostgreSQL, MongoDB, AWS, GCP, Git
+
+EXPERIENCE
+Data Scientist | DataPulse Analytics (2024 - Present)
+- Developed and deployed predictive ML models using Scikit-learn and PyTorch, improving customer retention by 15%.
+- Implemented Natural Language Processing (NLP) pipelines with SpaCy and NLTK to automate customer support classification.
+- Curated complex data transformations using Pandas and NumPy, preparing large datasets for model consumption.
+- Visualized statistical metrics and key results using Matplotlib and Seaborn for executive presentations.
+
+Data Analyst | InsightSolutions (2023 - 2024)
+- Extracted and queried data using SQL from large PostgreSQL and MongoDB databases.
+- Generated interactive business intelligence reports in Tableau and Power BI, saving business operations 5 hours a week.
+- Managed project repositories using Git and collaborated closely with product managers.
+
+EDUCATION
+M.S. in Data Science
+University of Analytics, 2023
+
+B.S. in Mathematics
+State University, 2021

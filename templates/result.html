@@ -1,0 +1,338 @@
+{% extends 'base.html' %}
+
+{% block title %}Analysis Result - {{ report.candidate_name|default:"Resume" }}{% endblock %}
+
+{% block content %}
+<div class="result-header">
+    <div class="candidate-summary">
+        <h2>{{ report.candidate_name|default:"Unknown Candidate" }}</h2>
+        <p>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Parsed file: <strong>{{ report.filename }}</strong> &bull; Analyzed on {{ report.uploaded_at|date:"M d, Y H:i" }}
+        </p>
+    </div>
+    
+    <div style="display: flex; gap: 12px;">
+        <a href="{% url 'home' %}" class="btn btn-secondary btn-sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            New Analysis
+        </a>
+        <a href="{% url 'history' %}" class="btn btn-secondary btn-sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            View History
+        </a>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <!-- Side Panel: Scoring & Core Parameters -->
+    <div class="metric-panel">
+        
+        <!-- Score Card -->
+        <div class="glass-panel score-card">
+            <div class="score-card-content">
+                <h3 style="font-size: 1.1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">ATS Score</h3>
+                
+                <div class="gauge-container">
+                    <svg class="gauge-svg" width="180" height="180">
+                        <circle class="gauge-bg" cx="90" cy="90" r="75"></circle>
+                        <circle class="gauge-progress {{ score_color }}" cx="90" cy="90" r="75" 
+                                stroke-dasharray="471.2" 
+                                stroke-dashoffset="{{ score_dashoffset }}"></circle>
+                    </svg>
+                    <div class="gauge-text">
+                        <span class="gauge-number">{{ report.score }}</span>
+                        <div class="gauge-label">Score</div>
+                    </div>
+                </div>
+                
+                <p style="font-size: 0.9rem; line-height: 1.4; color: var(--text-muted); margin-top: 8px;">
+                    {% if report.score >= 80 %}
+                        Excellent formatting and structural alignment. Your resume is highly competitive.
+                    {% elif report.score >= 60 %}
+                        Strong structure, but there are a few layout issues and gaps that can be optimized.
+                    {% else %}
+                        Critical formatting gaps identified. Review the recommendations to improve parsing.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <!-- JD Match Score Card (If Match Executed) -->
+        {% if report.jd_match_score is not None %}
+        <div class="glass-panel score-card" style="border-color: rgba(6, 182, 212, 0.2);">
+            <div class="score-card-content">
+                <h3 style="font-size: 1.1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Job Relevance Match</h3>
+                
+                <div class="gauge-container">
+                    <svg class="gauge-svg" width="180" height="180">
+                        <circle class="gauge-bg" cx="90" cy="90" r="75"></circle>
+                        <circle class="gauge-progress {{ jd_score_color }}" cx="90" cy="90" r="75" 
+                                stroke-dasharray="471.2" 
+                                stroke-dashoffset="{{ jd_dashoffset }}"></circle>
+                    </svg>
+                    <div class="gauge-text">
+                        <span class="gauge-number">{{ report.jd_match_score }}%</span>
+                        <div class="gauge-label">Relevance</div>
+                    </div>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Matches your skill profile against keywords extracted from target job description.</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Contact Information -->
+        <div class="glass-panel">
+            <h3 style="font-size: 1.15rem; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">Contact Metadata</h3>
+            <div class="contact-list">
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Name</div>
+                        <div style="font-weight: 600;">{{ report.candidate_name|default:"Not found" }}</div>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Email</div>
+                        <div>
+                            {% if report.candidate_email %}
+                                <a href="mailto:{{ report.candidate_email }}">{{ report.candidate_email }}</a>
+                            {% else %}
+                                <span style="color: var(--color-danger); font-weight: 500;">Missing</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Phone</div>
+                        <div>{{ report.candidate_phone|default:"Not found" }}</div>
+                    </div>
+                </div>
+
+                {% if report.candidate_links %}
+                    {% for link in report.candidate_links %}
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">
+                                {% if "github.com" in link %}
+                                    GitHub Profile
+                                {% elif "linkedin.com" in link %}
+                                    LinkedIn Profile
+                                {% else %}
+                                    Portfolio/Link
+                                {% endif %}
+                            </div>
+                            <div>
+                                <a href="{% if not link|slice:":4" == 'http' %}https://{% endif %}{{ link }}" target="_blank">{{ link }}</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+        </div>
+
+        <!-- Section Checklist -->
+        <div class="glass-panel">
+            <h3 style="font-size: 1.15rem; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">
+                Required Sections ({{ sections_count }}/{{ total_sections }})
+            </h3>
+            <div class="sections-list">
+                {% for section, present in report.sections_present.items %}
+                <div class="section-check-item">
+                    <div class="section-check-info">
+                        <div class="check-indicator {% if present %}checked{% else %}missing{% endif %}">
+                            {% if present %}
+                                &#10003;
+                            {% else %}
+                                &#10007;
+                            {% endif %}
+                        </div>
+                        <span>{{ section }}</span>
+                    </div>
+                    <span style="font-size: 0.8rem; color: {% if present %}var(--color-success){% else %}var(--color-danger){% endif %}; font-weight: 500;">
+                        {% if present %}Detected{% else %}Missing{% endif %}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Main Panel: Skills Analysis & Suggestions -->
+    <div class="analysis-panel">
+        
+        <!-- Extracted Skills Cloud -->
+        <div class="glass-panel">
+            <h3 style="font-size: 1.3rem; margin-bottom: 8px;">Identified Technical Skills</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">Categorized skill nodes identified in the resume content:</p>
+            
+            {% if report.skills_found %}
+                <div class="skills-cloud">
+                    {% for skill in report.skills_found %}
+                        <span class="skill-badge">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p style="color: var(--color-danger); font-size: 0.9rem; font-weight: 500;">No standard programming skills or technical credentials were identified.</p>
+            {% endif %}
+        </div>
+
+        <!-- Missing Skills Gap (If JD Match Completed) -->
+        {% if report.jd_match_score is not None %}
+        <div class="glass-panel" style="border-color: rgba(245, 158, 11, 0.2);">
+            <h3 style="font-size: 1.3rem; margin-bottom: 8px; color: var(--color-warning);">Skills Gap Analysis</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">Required keywords/skills from the Job Description missing in your profile:</p>
+            
+            {% if report.skills_missing %}
+                <div class="skills-cloud">
+                    {% for skill in report.skills_missing %}
+                        <span class="skill-badge missing">+ {{ skill }}</span>
+                    {% endfor %}
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 8px;">
+                    💡 <strong>Recommendation:</strong> If you possess these skills, make sure to add them explicitly with descriptive projects or experience to trigger matching.
+                </p>
+            {% else %}
+                <p style="color: var(--color-success); font-size: 0.9rem; font-weight: 500;">Excellent! No major skill gaps were identified. Your credentials align perfectly with the job request.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Detailed Audit List: Strengths & Weaknesses -->
+        <div class="list-panel-container">
+            
+            <!-- Strengths -->
+            <div class="glass-panel">
+                <h3 class="panel-title strengths-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    Strengths
+                </h3>
+                <ul class="bullet-list">
+                    {% for strength in report.strengths %}
+                    <li class="bullet-item strength">
+                        <svg class="bullet-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>{{ strength }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="bullet-item strength" style="color: var(--text-muted);">No major layout strengths identified. Let's optimize!</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Weaknesses / Improvements -->
+            <div class="glass-panel">
+                <h3 class="panel-title weaknesses-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    Weaknesses
+                </h3>
+                <ul class="bullet-list">
+                    {% for weakness in report.weaknesses %}
+                    <li class="bullet-item weakness">
+                        <svg class="bullet-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        <span>{{ weakness }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="bullet-item weakness" style="color: var(--color-success); font-weight: 500;">
+                        No structural weaknesses found. Your resume complies fully with ATS guidelines!
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- AI Improvement Action Items -->
+        <div class="glass-panel">
+            <h3 class="panel-title rec-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+                AI Recommendations
+            </h3>
+            <ul class="bullet-list" style="margin-top: 16px;">
+                {% for rec in report.recommendations %}
+                <li class="bullet-item recommendation" style="font-size: 0.95rem; border-left: 2px solid var(--color-secondary); padding-left: 12px; margin-bottom: 4px;">
+                    <span>{{ rec }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Career Path Alignment -->
+        <div class="glass-panel">
+            <h3 style="font-size: 1.3rem; margin-bottom: 8px;">Recommended Careers</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Job roles matched to your current technical capabilities based on the keyword analysis:</p>
+            
+            <div class="career-grid">
+                {% for role in report.suggested_roles %}
+                <div class="career-card">
+                    <div class="career-role">{{ role.role }}</div>
+                    <div class="career-match">{{ role.match_percentage }}% Match</div>
+                    <div class="career-skills">
+                        {% for skill in role.aligned_skills %}
+                            <span class="career-skill-pill">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% empty %}
+                <p style="color: var(--text-muted); font-size: 0.9rem; grid-column: 1/-1;">Could not align with specific developer profiles. Add more core programming languages and framework tags.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
