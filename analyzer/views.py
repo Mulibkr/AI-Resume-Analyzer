@@ -7,8 +7,24 @@ import tempfile
 from analyzer.models import ResumeReport
 from analyzer.parser import extract_text_from_pdf, analyze_resume
 
+_db_initialized = False
+
+def ensure_db_initialized():
+    global _db_initialized
+    if not _db_initialized:
+        if 'VERCEL' in os.environ:
+            db_path = '/tmp/db.sqlite3'
+            if not os.path.exists(db_path) or os.path.getsize(db_path) == 0:
+                try:
+                    from django.core.management import call_command
+                    call_command('migrate', interactive=False)
+                except Exception as e:
+                    print(f"Error auto-migrating database: {e}")
+        _db_initialized = True
+
 def home(request):
     """View to handle resume uploading and job description matching."""
+    ensure_db_initialized()
     if request.method == 'POST':
         resume_file = request.FILES.get('resume')
         job_description = request.POST.get('job_description', '').strip()
@@ -80,6 +96,7 @@ def home(request):
 
 def result(request, report_id):
     """View to display detailed analysis result of a resume."""
+    ensure_db_initialized()
     report = get_object_or_404(ResumeReport, id=report_id)
     
     # Calculate key summary stats for templates
@@ -120,6 +137,7 @@ def result(request, report_id):
 
 def history(request):
     """View to display all past resume analysis reports with search and filter functionality."""
+    ensure_db_initialized()
     q = request.GET.get('q', '').strip()
     reports = ResumeReport.objects.all().order_by('-uploaded_at')
     
